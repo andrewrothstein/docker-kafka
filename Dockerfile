@@ -1,15 +1,21 @@
 FROM ubuntu:trusty
 
-MAINTAINER Wurstmeister 
+MAINTAINER "Andrew Rothstein" andrew.rothstein@gmail.com
 
-RUN apt-get update; apt-get install -y unzip  openjdk-6-jdk wget git docker.io
+RUN apt-get update; apt-get install -y unzip  openjdk-6-jdk wget git
 
-RUN wget -q http://apache.mirrors.lucidnetworks.net/kafka/0.8.2.0/kafka_2.10-0.8.2.0.tgz -O /tmp/kafka_2.10-0.8.2.0.tgz
-RUN tar xfz /tmp/kafka_2.10-0.8.2.0.tgz -C /opt
+ENV SCALA_VERSION 2.10
+ENV KAFKA_VERSION 0.8.2.0
+ENV KAFKA_PRE kafka_${SCALA_VERSION}-${KAFKA_VERSION}
+ENV KAFKA_ARCHIVE ${KAFKA_PRE}.tgz
+RUN wget -q http://apache.mirrors.lucidnetworks.net/kafka/${KAFKA_VERSION}/${KAFKA_ARCHIVE} -O /tmp/${KAFKA_ARCHIVE} \
+ && tar xfz /tmp/${KAFKA_ARCHIVE} -C /opt \
+ && rm -f /tmp/${KAFKA_ARCHIVE}
 
-VOLUME ["/kafka"]
+VOLUME ["/data/kafka/logs"]
 
-ENV KAFKA_HOME /opt/kafka_2.10-0.8.2.0
+ENV KAFKA_HOME /opt/${KAFKA_PRE}
+RUN ln -s /opt/${KAFKA_PRE} /opt/kafka
+ADD config/server.properties /opt/kafka/config/server.properties
 ADD start-kafka.sh /usr/bin/start-kafka.sh
-ADD broker-list.sh /usr/bin/broker-list.sh
 CMD start-kafka.sh 
