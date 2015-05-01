@@ -1,11 +1,11 @@
-FROM ubuntu:trusty
+FROM dockerfile/java:oracle-java8
 
 MAINTAINER "Andrew Rothstein" andrew.rothstein@gmail.com
 
-RUN apt-get update; apt-get install -y unzip  openjdk-6-jdk wget git
+RUN apt-get update && apt-get install -y unzip wget
 
-ENV SCALA_VERSION 2.10
-ENV KAFKA_VERSION 0.8.2.0
+ENV SCALA_VERSION 2.11
+ENV KAFKA_VERSION 0.8.2.1
 ENV KAFKA_PRE kafka_${SCALA_VERSION}-${KAFKA_VERSION}
 ENV KAFKA_ARCHIVE ${KAFKA_PRE}.tgz
 RUN wget -q http://apache.mirrors.lucidnetworks.net/kafka/${KAFKA_VERSION}/${KAFKA_ARCHIVE} -O /tmp/${KAFKA_ARCHIVE} \
